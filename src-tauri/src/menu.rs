@@ -1,4 +1,4 @@
-use tauri::{menu::{MenuBuilder, SubmenuBuilder}, App, Emitter, Manager, Runtime};
+use tauri::{menu::{MenuBuilder, SubmenuBuilder}, App, Emitter, Runtime};
 
 pub const MENU_EVENT_OPEN_DIRECTORY: &str = "menu://open-directory";
 pub const MENU_EVENT_SAVE: &str = "menu://save";

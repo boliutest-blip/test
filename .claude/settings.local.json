@@ -34,7 +34,9 @@
       "Bash(npm --prefix \"C:/Users/liubo/excaliapp\" run tauri dev)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(tasklist:*)"
+      "Bash(tasklist:*)",
+      "Bash(npm run:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }
