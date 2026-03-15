@@ -25,3 +25,7 @@ export type ReadDocumentResponse = {
 export type SaveDocumentResponse = {
   path: string;
 };
+
+export type CreateDocumentResponse = {
+  path: string;
+};

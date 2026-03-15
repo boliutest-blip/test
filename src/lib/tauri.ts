@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 import type {
   AppStateResponse,
+  CreateDocumentResponse,
   OpenWorkspaceResponse,
   PickDirectoryResponse,
   ReadDocumentResponse,
@@ -49,5 +50,15 @@ export async function persistWorkspace(
 ): Promise<AppStateResponse> {
   return invoke<AppStateResponse>("persist_workspace", {
     request: { lastOpenedDirectory, lastOpenedFile },
+  });
+}
+
+export async function createDocument(
+  workspaceDirectory: string,
+  fileName: string,
+  content: string,
+): Promise<CreateDocumentResponse> {
+  return invoke<CreateDocumentResponse>("create_document", {
+    request: { workspaceDirectory, fileName, content },
   });
 }

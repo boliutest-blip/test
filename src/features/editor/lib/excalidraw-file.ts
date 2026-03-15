@@ -1,4 +1,9 @@
-import type { AppState, BinaryFiles, Collaborator, SocketId } from "@excalidraw/excalidraw/types";
+import type {
+  AppState,
+  BinaryFiles,
+  Collaborator,
+  SocketId,
+} from "@excalidraw/excalidraw/types";
 import type {
   ExcalidrawElement,
   OrderedExcalidrawElement,
@@ -40,6 +45,16 @@ function normalizeAppState(appState: Partial<AppState>): Partial<AppState> {
   return {
     ...appState,
     collaborators: normalizeCollaborators(appState.collaborators),
+  };
+}
+
+export function createEmptyExcalidrawSnapshot(): ExcalidrawDocumentSnapshot {
+  return {
+    elements: [],
+    appState: {
+      viewBackgroundColor: "#ffffff",
+    },
+    files: {},
   };
 }
 

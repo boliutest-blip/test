@@ -23,6 +23,7 @@ pub fn run() {
             workspace::persist_workspace,
             document::read_document,
             document::save_document,
+            document::create_document,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

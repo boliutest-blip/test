@@ -2,7 +2,8 @@ use std::path::PathBuf;
 
 use crate::{
     models::document::{
-        ReadDocumentRequest, ReadDocumentResponse, SaveDocumentRequest, SaveDocumentResponse,
+        CreateDocumentRequest, CreateDocumentResponse, ReadDocumentRequest, ReadDocumentResponse,
+        SaveDocumentRequest, SaveDocumentResponse,
     },
     services::document_service,
 };
@@ -29,4 +30,22 @@ pub fn save_document(request: SaveDocumentRequest) -> Result<SaveDocumentRespons
         .map_err(|error| error.to_string())?;
 
     Ok(SaveDocumentResponse { path: request.path })
+}
+
+#[tauri::command]
+pub fn create_document(request: CreateDocumentRequest) -> Result<CreateDocumentResponse, String> {
+    let workspace_directory = PathBuf::from(&request.workspace_directory);
+
+    let created_path = document_service::create_document(
+        &workspace_directory,
+        &request.file_name,
+        &request.content,
+    )
+    .map_err(|error| error.to_string())?;
+
+    let path = created_path
+        .to_string_lossy()
+        .into_owned();
+
+    Ok(CreateDocumentResponse { path })
 }

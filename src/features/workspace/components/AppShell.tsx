@@ -9,6 +9,7 @@ type AppShellProps = {
   saveStatusLabel: string;
   shortcutLabel: string;
   onOpenDirectory: () => void;
+  onCreateFile: () => void;
   onSelectFile: (path: string) => void;
   children: ReactNode;
 };
@@ -20,6 +21,7 @@ export function AppShell({
   saveStatusLabel,
   shortcutLabel,
   onOpenDirectory,
+  onCreateFile,
   onSelectFile,
   children,
 }: AppShellProps) {
@@ -35,7 +37,7 @@ export function AppShell({
           <button
             type="button"
             className="sidebar-new-file"
-            onClick={onOpenDirectory}
+            onClick={onCreateFile}
           >
             + New File
           </button>

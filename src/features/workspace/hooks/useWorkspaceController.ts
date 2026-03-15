@@ -14,12 +14,15 @@ import {
   pickDirectory,
   readDocument,
   saveDocument,
+  createDocument,
 } from "../../../lib/tauri";
 import {
   FILE_OPEN_ERROR_MESSAGE,
   parseExcalidrawContent,
   serializeExcalidrawContent,
+  type ExcalidrawDocumentSnapshot,
   type ParsedExcalidrawContent,
+  createEmptyExcalidrawSnapshot,
 } from "../../editor/lib/excalidraw-file";
 import type { ExcalidrawSnapshot } from "../../editor/components/ExcalidrawEditor";
 import {
@@ -40,6 +43,7 @@ type UseWorkspaceControllerResult = {
   saveStatusLabel: string;
   shortcutLabel: string;
   handleOpenDirectory: () => Promise<void>;
+  handleCreateFile: () => Promise<void>;
   handleSelectFile: (path: string) => Promise<void>;
   handleSnapshotChange: (snapshot: ExcalidrawSnapshot) => void;
   handleApiReady: (api: ExcalidrawImperativeAPI | null) => void;
@@ -425,6 +429,53 @@ export function useWorkspaceController(): UseWorkspaceControllerResult {
     saveStatusLabel,
     shortcutLabel,
     handleOpenDirectory,
+    handleCreateFile: useCallback(async () => {
+      const currentState = stateReference.current;
+      if (!currentState.currentDirectory) {
+        return;
+      }
+
+      if (currentState.isDirty) {
+        try {
+          await triggerSave();
+        } catch {
+          return;
+        }
+      }
+
+      const workspaceDirectory = currentState.currentDirectory;
+      const emptySnapshot: ExcalidrawDocumentSnapshot = createEmptyExcalidrawSnapshot();
+      const content = serializeExcalidrawContent(emptySnapshot);
+
+      const response = await createDocument(
+        workspaceDirectory,
+        "Untitled.excalidraw",
+        content,
+      );
+
+      let workspace;
+      try {
+        workspace = await openWorkspace(workspaceDirectory);
+      } catch (error) {
+        setActiveErrorMessage(
+          error instanceof Error ? error.message : "Directory cannot be read",
+        );
+        return;
+      }
+
+      setState((current) => ({
+        ...current,
+        currentDirectory: workspace.directory,
+        fileList: workspace.files,
+        activeFilePath: null,
+        activeFileName: null,
+        loadStatus: "idle",
+        saveStatus: "idle",
+        pendingNavigation: null,
+      }));
+
+      await loadFile(workspace.directory, response.path);
+    }, [loadFile, triggerSave]),
     handleSelectFile,
     handleSnapshotChange,
     handleApiReady,

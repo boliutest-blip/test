@@ -13,6 +13,7 @@ function App() {
     saveStatusLabel,
     shortcutLabel,
     handleOpenDirectory,
+    handleCreateFile,
     handleSelectFile,
     handleSnapshotChange,
     handleApiReady,
@@ -27,6 +28,9 @@ function App() {
       shortcutLabel={shortcutLabel}
       onOpenDirectory={() => {
         void handleOpenDirectory();
+      }}
+      onCreateFile={() => {
+        void handleCreateFile();
       }}
       onSelectFile={(path) => {
         void handleSelectFile(path);

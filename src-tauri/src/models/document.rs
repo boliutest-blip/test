@@ -27,3 +27,18 @@ pub struct SaveDocumentRequest {
 pub struct SaveDocumentResponse {
     pub path: String,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateDocumentRequest {
+    pub workspace_directory: String,
+    /// Optional file name hint, e.g. "Untitled.excalidraw"
+    pub file_name: String,
+    pub content: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateDocumentResponse {
+    pub path: String,
+}
