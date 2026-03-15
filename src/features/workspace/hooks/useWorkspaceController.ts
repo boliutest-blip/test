@@ -214,7 +214,7 @@ export function useWorkspaceController(): UseWorkspaceControllerResult {
   }, [latestSnapshot, processPendingNavigation]);
 
   const handleOpenDirectory = useCallback(async () => {
-    if (state.isDirty) {
+    if (stateReference.current.isDirty) {
       try {
         await triggerSave();
       } catch {
@@ -222,38 +222,63 @@ export function useWorkspaceController(): UseWorkspaceControllerResult {
       }
     }
 
-    const selection = await pickDirectory();
+    let selection: { directory: string | null };
+    try {
+      selection = await pickDirectory();
+    } catch (error) {
+      setActiveErrorMessage(
+        error instanceof Error ? error.message : "Directory picker failed",
+      );
+      setState((current) => ({ ...current, loadStatus: "error" }));
+      return;
+    }
+
     if (!selection.directory) {
       return;
     }
 
+    let workspace;
     try {
-      const workspace = await openWorkspace(selection.directory);
-      setState((current) => ({
-        ...current,
-        currentDirectory: workspace.directory,
-        fileList: workspace.files,
-        activeFilePath: null,
-        activeFileName: null,
-        loadStatus: "idle",
-        saveStatus: "idle",
-        pendingNavigation: null,
-      }));
-      setActiveDocument(null);
-      setActiveErrorMessage(null);
-      setViewKey(null);
-      setLatestSnapshot(null);
-      await persistWorkspace(workspace.directory, null);
-      if (workspace.files.length > 0) {
-        await loadFile(workspace.directory, workspace.files[0].path);
-      }
+      workspace = await openWorkspace(selection.directory);
     } catch (error) {
       setActiveErrorMessage(
         error instanceof Error ? error.message : "Directory cannot be read",
       );
       setState((current) => ({ ...current, loadStatus: "error" }));
+      return;
     }
-  }, [loadFile, state.isDirty, triggerSave]);
+
+    setState((current) => ({
+      ...current,
+      currentDirectory: workspace.directory,
+      fileList: workspace.files,
+      activeFilePath: null,
+      activeFileName: null,
+      loadStatus: "idle",
+      saveStatus: "idle",
+      pendingNavigation: null,
+    }));
+    setActiveDocument(null);
+    setActiveErrorMessage(null);
+    setViewKey(null);
+    setLatestSnapshot(null);
+
+    let persistenceErrorMessage: string | null = null;
+    try {
+      await persistWorkspace(workspace.directory, null);
+    } catch (error) {
+      persistenceErrorMessage =
+        error instanceof Error ? error.message : "Settings cannot be saved";
+    }
+
+    if (workspace.files.length > 0) {
+      await loadFile(workspace.directory, workspace.files[0].path);
+    }
+
+    if (persistenceErrorMessage && stateReference.current.loadStatus !== "error") {
+      setActiveErrorMessage(persistenceErrorMessage);
+    }
+  }, [loadFile, triggerSave]);
 
   const handleSelectFile = useCallback(
     async (path: string) => {

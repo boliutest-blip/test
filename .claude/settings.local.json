@@ -36,7 +36,15 @@
       "Bash(findstr:*)",
       "Bash(tasklist:*)",
       "Bash(npm run:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm --prefix \"C:\\\\Users\\\\liubo\\\\excaliapp\" run test:*)",
+      "Bash(npm --prefix \"C:\\\\Users\\\\liubo\\\\excaliapp\" run build)",
+      "Bash(npm --prefix \"C:\\\\Users\\\\liubo\\\\excaliapp\" run tauri dev)",
+      "Bash(git -C \"C:\\\\Users\\\\liubo\\\\excaliapp\" status:*)",
+      "Bash(git -C \"C:\\\\Users\\\\liubo\\\\excaliapp\" diff:*)",
+      "Bash(git -C \"C:\\\\Users\\\\liubo\\\\excaliapp\" log:*)",
+      "Bash(git -C \"C:\\\\Users\\\\liubo\\\\excaliapp\" remote:*)",
+      "Bash(git -C \"C:\\\\Users\\\\liubo\\\\excaliapp\" branch:*)"
     ]
   }
 }
